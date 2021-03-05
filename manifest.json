@@ -1,0 +1,13 @@
+{
+    "manifest_version": 2,
+    "name": "reply-all-auto-cc",
+    "version": "0.0.1",
+    "description": "When reply to all is used, move original To: recipients to Cc:",
+    "applications": {"gecko": {
+        "id": "reply-all-auto-cc@github.com",
+        "strict_min_version": "78.0",
+        "strict_max_version": "78.x"
+    }},
+    "permissions": [],
+    "background": {"scripts": ["background.js"]}
+}
