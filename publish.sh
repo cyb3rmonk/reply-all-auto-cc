@@ -7,7 +7,7 @@ if [ "$(git branch --show-current)" != "master" ]; then
     exit 1;
 fi
 
-if [ -z "$(git status --porcelain)" ]; then
+if [ "$(git status --porcelain)" ]; then
     echo "git has uncommitted changes";
     exit 1;
 fi
