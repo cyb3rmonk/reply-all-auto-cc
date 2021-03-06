@@ -22,6 +22,7 @@ done
 # sanity checks (skipped with --force flag)
 
 if [ $FORCE != 1 ]; then
+    git fetch origin;
     if [ "$(git branch --show-current)" != "master" ]; then
         echo "publish can only run on master branch";
         exit 1;
@@ -46,7 +47,7 @@ rm -f "./$FILENAME.xpi"
 
 if [ $DRY_RUN != 1 ]; then
     echo "publishing...";
-    (set -x; hub release create -a "$FILENAME.xpi" -m "v$VERSION" "v$VERSION");
+    (set -x; gh release create "v$VERSION" "./$FILENAME.xpi" );
     echo "all done!"
 else
     echo "all done! (dry-run)"
