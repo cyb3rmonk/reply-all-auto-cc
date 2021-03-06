@@ -47,7 +47,8 @@ rm -f "./$FILENAME.xpi"
 
 if [ $DRY_RUN != 1 ]; then
     echo "publishing...";
-    (set -x; gh release create "v$VERSION" "./$FILENAME.xpi" );
+    (set -x; gh release create "v$VERSION" -t "v$VERSION" "./$FILENAME.xpi" );
+    git fetch origin;
     rm "./$FILENAME.xpi"
     echo "all done!"
 else
