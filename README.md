@@ -6,7 +6,7 @@ This extension puts them as "Cc" instead (only original sender is kept as "To").
 
 This extension also forces "Cc" field to be always visible on new messages.
 
-# Future improvements #
+**Future improvements**
 
 - Modifying Cc field through the WebExtension API makes Thunderbird move the
   focus to the Cc field. Since this is not a useful default focus for most new
