@@ -24,18 +24,18 @@ done
 if [ $FORCE != 1 ]; then
     git fetch origin;
     if [ "$(git branch --show-current)" != "master" ]; then
-        echo "publish can only run on master branch";
-        exit 1;
+        echo "publish can only run on master branch"
+        exit 1
     fi
-    GIT_STATUS="$(git status --porcelain | grep -v 'M publish.sh' || true)";
+    GIT_STATUS="$(git status --porcelain | grep -v 'M publish.sh' || true)"
     if [ "$GIT_STATUS" ]; then
-        echo "git has uncommitted changes:";
-        echo "$GIT_STATUS";
-        exit 1;
+        echo "git has uncommitted changes:"
+        echo "$GIT_STATUS"
+        exit 1
     fi
     if git rev-list "v$VERSION" &>/dev/null; then
-        echo "tag $VERSION already exists";
-        exit 1;
+        echo "tag $VERSION already exists"
+        exit 1
     fi
 fi
 
@@ -43,13 +43,12 @@ fi
 echo "creating xpi file..."
 FILENAME="${NAME}_${VERSION}"
 rm -f "./$FILENAME.xpi"
-(set -x; zip "./$FILENAME.xpi" ./manifest.json ./*.js);
+(set -x; zip "./$FILENAME.xpi" ./manifest.json ./*.js)
 
 if [ $DRY_RUN != 1 ]; then
-    echo "publishing...";
-    (set -x; gh release create "v$VERSION" -t "v$VERSION" "./$FILENAME.xpi" );
-    git fetch origin;
-    rm "./$FILENAME.xpi"
+    echo "publishing..."
+    (set -x; gh release create "v$VERSION" -t "v$VERSION" "./$FILENAME.xpi" )
+    git fetch origin
     echo "all done!"
 else
     echo "all done! (dry-run)"
