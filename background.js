@@ -1,4 +1,4 @@
-// XXX philippe: add license
+// SPDX-License-Identifier: GPL-3.0-only
 (function(tb){
 'use strict';
 const verbose = false;
