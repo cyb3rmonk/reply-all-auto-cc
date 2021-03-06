@@ -7,8 +7,10 @@ if [ "$(git branch --show-current)" != "master" ]; then
     exit 1;
 fi
 
-if [ "$(git status --porcelain)" ]; then
-    echo "git has uncommitted changes";
+GIT_STATUS="$(git status --porcelain)";
+if [ "$GIT_STATUS" ]; then
+    echo "git has uncommitted changes:";
+    echo "$GIT_STATUS";
     exit 1;
 fi
 
