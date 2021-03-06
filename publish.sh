@@ -39,24 +39,15 @@ if [ $FORCE != 1 ]; then
 fi
 
 # publishing
-echo "publishing $NAME $VERSION...";
-
-if ! git rev-list "v$VERSION" &>/dev/null; then
-    echo "creating tag";
-    git tag "v$VERSION";
-fi
-
-echo "creating xpi file"
+echo "creating xpi file..."
 FILENAME="${NAME}_${VERSION}"
 rm -f "./$FILENAME.xpi"
-zip "./$FILENAME.xpi" ./manifest.json ./*.js
+(set -x; zip "./$FILENAME.xpi" ./manifest.json ./*.js);
 
 if [ $DRY_RUN != 1 ]; then
-    echo "creating tag in github...";
-    git push origin "v$VERSION" --quiet;
-    echo "creating release in github...";
-    hub release create -a "$FILENAME.xpi" -m "v$VERSION" "v$VERSION"
-    echo "published!"
+    echo "publishing...";
+    (set -x; hub release create -a "$FILENAME.xpi" -m "v$VERSION" "v$VERSION");
+    echo "all done!"
 else
-    echo "fake-published! (dry-run)"
+    echo "all done! (dry-run)"
 fi
