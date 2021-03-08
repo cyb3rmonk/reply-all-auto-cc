@@ -14,8 +14,7 @@ const on_compose_start = async (tab, win)=>{
             status: tab.status},
         win: {id: win.id, type: win.type},
         details: msg,
-    }, null, 2));
-    focus_compose_body(tab.id);
+    }));
     // recipients are not available right away, so need to wait
     if (is_reply(msg))
     {
@@ -39,23 +38,36 @@ const on_compose_start = async (tab, win)=>{
     // ALWAYS SHOW CC BEHAVIOR
     if (!msg.cc.length)
     {
-        tb.compose.setComposeDetails(tab.id, {cc: ['x']});
+        /*no await*/ tb.compose.setComposeDetails(tab.id, {cc: ['x']});
         await tb.compose.setComposeDetails(tab.id, {cc: []});
     }
-    // hack because editing CC causes focus to move to CC field,
-    // which is rarely what we want. Least bad solution is to focus body.
-    await focus_compose_body(tab.id);
+    // HACK: editing CC causes focus to move to CC field, which is not useful.
+    // Least bad solution is to fix focus manually to body/to.
+    await set_compose_focus(tab.id, is_reply(msg)&&'body' || 'to', {msg});
 };
 
-const focus_compose_body = tab_id=>
-    tb.tabs.executeScript(tab_id, {code: 'window.focus()'});
+const set_compose_focus = async (tab_id, target, opt)=>{
+    log.info('setting compose focus to', target);
+    if (target=='to'||target=='cc'||target=='bcc') {
+        let msg = opt&&opt.msg;
+        if (!msg)
+            msg = await tb.compose.getComposeDetails(tab_id);
+        let orig_v = msg[target];
+        await tb.compose.setComposeDetails(tab_id, {[target]: [...orig_v, 'x']});
+        await tb.compose.setComposeDetails(tab_id, {[target]: orig_v});
+    } else if (target=='body') {
+        await tb.tabs.executeScript(tab_id, {code: 'window.focus()'});
+    } else {
+        throw new Error('Invalid focus target: '+target);
+    }
+};
 
 // type field was added in thunderbird 88
-// before, we use non-blank subject + "Re: " subject to detect
+// before, we check for "Re: " prefix in subject to detect
 const is_reply = msg=>{
     if (msg.type)
         return msg.type=='reply';
-    return !!msg.subject && msg.subject.startsWith('Re: ');
+    return (msg.subject||'').startsWith('Re: ');
 };
 
 tb.tabs.onCreated.addListener(tab=>{
