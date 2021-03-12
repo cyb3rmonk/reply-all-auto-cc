@@ -10,7 +10,7 @@ This extension also forces "Cc" field to be always visible on new messages.
 
 - Modifying Cc field through the WebExtension API makes Thunderbird move the
   focus to the Cc field. Since this is not a useful default focus for most
-  messages, the add-on manually moves the focus after changing it (body for
+  messages, the add-on manually moves the focus after changing cc (body for
   replies, To: for the rest). However, the best behavior would be to leave
   focus untouched so the manual focus logic will be remove if/when the
   "edit cc moves focus to cc" bug is fixed in thunderbird
