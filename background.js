@@ -43,7 +43,11 @@ const on_compose_start = async (tab, win)=>{
     }
     // HACK: editing CC causes focus to move to CC field, which is not useful.
     // Least bad solution is to fix focus manually to body/to.
-    await set_compose_focus(tab.id, is_reply(msg)&&'body' || 'to', {msg});
+    for (let delay of [0, 1, 10, 10])
+    {
+        if (delay) await sleep(delay);
+        await set_compose_focus(tab.id, is_reply(msg)&&'body' || 'to', {msg});
+    }
 };
 
 const set_compose_focus = async (tab_id, target, opt)=>{
