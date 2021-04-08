@@ -17,11 +17,3 @@ This extension also forces "Cc" field to be always visible on new messages.
 - The WebExtension API doesn't expose which message is being replied. If/when
   it is added, we should skip the To=>Cc conversion when replying to messages
   from "Sent" folder.
-
-# Publishing #
-- update version number in manifest.json
-- commit with message `vX.X.X - <desc>` & push
-- run `./publish.sh`
-  - tag will be created on github
-  - .xpi file will be created
-- upload new .xpi to https://addons.thunderbird.net
