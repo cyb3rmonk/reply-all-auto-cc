@@ -24,4 +24,4 @@ This extension also forces "Cc" field to be always visible on new messages.
 - run `./publish.sh`
   - tag will be created on github
   - .xpi file will be created
-- uploaad new .xpi to thunderbird add-on website
+- upload new .xpi to https://addons.thunderbird.net
