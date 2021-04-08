@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 (function(tb){
 'use strict';
-const verbose = false;
+const verbose = 0;
 
 // TODOS:
 // - skip cc conversion when replying to email from 'Sent' directory
@@ -108,14 +108,14 @@ const json0 = v=>JSON.stringify(v);
 const log = (conf, ...args)=>{
     if (typeof conf=='string')
         conf = {cfn: conf};
-    if (conf.verbose && !verbose)
+    if (conf.verbose && verbose<conf.verbose)
         return;
     console[conf.cfn||'log'](...args);
 };
 log.error = log.bind(log, {cfn: 'error'});
 log.warn = log.bind(log, {cfn: 'warn'});
-log.info = log.bind(log, {cfn: 'log'});
-log.debug = log.bind(log, {cfn: 'debug'});
-log.trace = log.bind(log, {cfn: 'debug', verbose: 1});
+log.info = log.bind(log, {cfn: 'log', verbose: 1});
+log.debug = log.bind(log, {cfn: 'debug', verbose: 2});
+log.trace = log.bind(log, {cfn: 'debug', verbose: 3});
 
 })(messenger);
