@@ -5,9 +5,13 @@ const verbose = 0;
 
 // TODOS:
 // - skip cc conversion when replying to email from 'Sent' directory
-//   (no available tb api allows this, as of v88)
+//   (no available tb api allows this, as of v91)
 
 const on_compose_start = async (tab, win)=>{
+    // HACK: in some scenarios (draft, mailto, auto-bcc), calling
+    // getComposeDetails immediately after tab is created causes some
+    // message details to be lost, need to sleep to avoid this
+    await sleep(10);
     let msg = await tb.compose.getComposeDetails(tab.id);
     log.info('on_compose_start', json2({
         tab: {id: tab.id, win_id: tab.windowId, url: tab.url,
@@ -15,8 +19,8 @@ const on_compose_start = async (tab, win)=>{
         win: {id: win.id, type: win.type},
         details: msg,
     }));
-    // recipients are not available right away, so need to wait
-    if (is_reply(msg))
+    // recipients are not always available right away, so need to wait
+    if (!is_new(msg))
     {
         let waits = [1, 10, 25, 50, 100, 100, 100, 100]; // total: 486
         for (let i=0; !msg.to.length&&!msg.cc.length && i<waits.length; i++)
@@ -46,12 +50,13 @@ const on_compose_start = async (tab, win)=>{
     for (let delay of [0, 1, 10, 10])
     {
         if (delay) await sleep(delay);
-        await set_compose_focus(tab.id, is_reply(msg)&&'body' || 'to', {msg});
+        await set_compose_focus(tab.id, is_reply(msg)&&'body'
+            || !msg.to.length&&'to' || 'body', {msg});
     }
 };
 
 const set_compose_focus = async (tab_id, target, opt)=>{
-    log.info('setting compose focus to', target);
+    log.info(`setting compose focus to '${target}'`);
     if (target=='to'||target=='cc'||target=='bcc') {
         let msg = opt&&opt.msg;
         if (!msg)
@@ -73,6 +78,12 @@ const is_reply = msg=>{
         return msg.type=='reply';
     return (msg.subject||'').startsWith('Re: ');
 };
+
+const is_new = msg=>{
+    if (msg.type)
+        return msg.type=='new';
+    return !msg.subject;
+}
 
 tb.tabs.onCreated.addListener(tab=>{
     log.trace('tabs.onCreated', tab);
